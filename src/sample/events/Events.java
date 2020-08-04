@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Events {
+    private boolean checkText;
     boolean click;
+
     Canvas canvas;
     ColorPicker colorPicker;
     TextField brushSize;
@@ -25,6 +27,10 @@ public class Events {
     BackAndForward backAndForward;
 
     void setCursor(){
+        if(checkText){
+            checkText = false;
+            backAndForward.addSnapshot(canvas);
+        }
         switch (toolBarPaint.pointer.pointerButton){
             case 0:{
                 toolBarPaint.pencil.setCursor(canvas);
@@ -100,6 +106,10 @@ public class Events {
 
     void designReleased(double x, double y){
         GraphicsContext g = canvas.getGraphicsContext2D();
+        if(checkText){
+            checkText = false;
+            backAndForward.addSnapshot(canvas);
+        }
         switch (toolBarPaint.pointer.pointerButton){
             case 0:{
                 toolBarPaint.pencil.designReleased(g, x, y);
@@ -143,6 +153,7 @@ public class Events {
             case 6:{
                 toolBarPaint.text.design(x, y);
                 click = true;
+                checkText = true;
                 break;
             }
             case 7:{
@@ -151,6 +162,7 @@ public class Events {
             }
             case 8:{
                 toolBarPaint.rectSelection.paste(canvas, x, y);
+                backAndForward.addSnapshot(canvas);
                 break;
             }
             case 9:{
@@ -261,6 +273,7 @@ public class Events {
 
     public Events(Canvas canvas, ColorPicker colorPicker, TextField brushSize, ToolBarPaint toolBarPaint, BackAndForward backAndForward){
         click = false;
+        checkText = false;
         this.canvas = canvas;
         this.colorPicker = colorPicker;
         this.brushSize = brushSize;
